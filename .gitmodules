@@ -1,0 +1,3 @@
+[submodule "ext/libusdt"]
+	path = ext/libusdt
+	url = https://github.com/chrisa/libusdt

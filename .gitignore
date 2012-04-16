@@ -1,0 +1,7 @@
+ext/usdt/Makefile
+ext/usdt/usdt.h
+pkg
+.bundle
+*.o
+*.a
+*.log
