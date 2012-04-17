@@ -10,6 +10,7 @@ static VALUE provider_create(VALUE self, VALUE name, VALUE mod);
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self);
 static VALUE provider_enable(VALUE self);
 static VALUE probe_enabled(VALUE self);
+static VALUE probe_fire(int argc, VALUE *argv, VALUE self);
 
 void Init_usdt() {
   USDT = rb_define_module("USDT");
@@ -23,6 +24,7 @@ void Init_usdt() {
 
   USDT_Probe = rb_define_class_under(USDT, "Probe", rb_cObject);
   rb_define_method(USDT_Probe, "enabled?", probe_enabled, 0);
+  rb_define_method(USDT_Probe, "fire", probe_fire, -1);
 }
 
 /**
@@ -91,9 +93,36 @@ static VALUE provider_enable(VALUE self) {
 static VALUE probe_enabled(VALUE self) {
   usdt_probedef_t **p = DATA_PTR(self);
   usdt_probedef_t *pd = *p;
+
   if (usdt_is_enabled(pd->probe) == 0) {
     return Qfalse;
   } else {
     return Qtrue;
   }
+}
+
+/**
+ * USDT::Probe#fire *args
+ */
+static VALUE probe_fire(int argc, VALUE *argv, VALUE self) {
+  usdt_probedef_t **p = DATA_PTR(self);
+  usdt_probedef_t *probedef = *p;
+
+  void *pargs[6];
+  int i;
+
+  for (i = 0; i < probedef->argc; i++) {
+    if (probedef->types[i] == USDT_ARGTYPE_STRING) {
+      Check_Type(argv[i], T_STRING);
+      pargs[i] = (void *) RSTRING_PTR(argv[i]);
+    } else if (probedef->types[i] == USDT_ARGTYPE_INTEGER) {
+      Check_Type(argv[i], T_FIXNUM);
+      pargs[i] = (void *) FIX2INT(argv[i]);
+    } else {
+      pargs[i] = NULL;
+    }
+  }
+
+  usdt_fire_probe(probedef->probe, probedef->argc, pargs);
+  return Qtrue;
 }

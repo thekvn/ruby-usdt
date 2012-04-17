@@ -14,7 +14,16 @@ r = provider.enable
 puts r.inspect
 
 while true
-  puts p1.enabled?
-  puts p2.enabled?
+  if p1.enabled?
+    puts "fire p1"
+    puts p1.fire("hello", "hello", "hello",
+            "hello", "hello", "hello")
+  end
+
+  if p2.enabled?
+    puts "fire p2"
+    puts p2.fire(100, 200, 300,
+            400, 500, 600)
+  end
   sleep 1
 end
