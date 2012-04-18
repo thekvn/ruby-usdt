@@ -2,36 +2,48 @@
 
 Ruby bindings for [libusdt](https://github.com/chrisa/libusdt).
 
+Applications, Libraries, and Frameworks can consume ruby-usdt to define DTrace 
+providers and probes at runtime for instrumentation and analysis by the DTrace
+[DTrace](http://en.wikipedia.org/wiki/DTrace) framework.
+
 ### Install
 
     gem install ruby-usdt
 
 ### Usage
 
-    require 'usdt'
-    require 'pp'
+    # Provider.create <provider>, <module>
+    #
+    # Creates a probe
+    #
+    # returns USDT::Provider object
+    provider = USDT::Provider.create :ruby, :mymod
 
-    provider = USDT::Provider.create :ruby, :test
-    p = provider.probe("myfn", "probe1",
-      :string, :string, :integer)
+    # Provider#probe *args
+    #
+    # args must be either :integer, or :string
+    # max 6 args (dtrace provides this many), additional args will be ignored
+    # returns USDT::Probe object
+    p = provider.probe("myfn", "probe", :string, :string, :integer)
 
+    # Provider#enable
+    # enables the probes defined with #probe
     provider.enable
 
     while true
-      p.enabled && p1.fire("omg", "probe!!", 12345)
+      if p.enabled
+      	p.fire("omg", "probe!!", 12345)
+      end
       sleep 0.5
     end
 
-    # test probes with 
-    $ sudo dtrace -n 'ruby*:*:*:p2 {
-      trace(copyinstr(args[0]));
-      trace(copyinstr(args[1]));
-      trace(args[1); }'
-
-### TODO (for first release)
-
-- Firing Probes
-- Allow passing :string and :integer for probe args
+    # see the probes in action with:
+    # you should see continious output of the fire args above
+    sudo dtrace -n 'ruby*:mymod:myfn:probe { printf("%s %s %d",
+      copyinstr(arg0),
+      copyinstr(arg1),
+      args[2])
+    }'
 
 ## License
 
