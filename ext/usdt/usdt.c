@@ -49,15 +49,15 @@ static VALUE provider_create(VALUE self, VALUE name, VALUE mod) {
  * USDT::Provider#probe(func, name, pargs*)
  */
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
-  const char *func = STR2CSTR(argv[0]);
-  const char *name = STR2CSTR(argv[1]);
+  const char *func = RSTRING_PTR(argv[0]);
+  const char *name = RSTRING_PTR(argv[1]);
   const char *types[6];
   size_t i, pargc = 0;
   size_t t_int = rb_intern("integer");
   size_t t_str = rb_intern("string");
 
   for (i = 0; i < 6; i++) {
-    if (i < argc-2) {
+    if (i < argc - 2) {
       Check_Type(argv[i+2], T_SYMBOL);
       if (t_int == rb_to_id(argv[i+2])) {
         types[i] = "int";

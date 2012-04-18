@@ -11,16 +11,22 @@ Ruby bindings for [libusdt](https://github.com/chrisa/libusdt).
     require 'usdt'
     require 'pp'
 
-    provider = USDT::Provider.create :myprovider, :test
-    p1 = provider.probe("myfn", "probe1",
-      "char *", "char *", "char *", 
-      "char *", "char *", "char *")
-
-    p2 = provider.probe("myfn", "probe2",
-       "int", "int", "int",
-      "int", "int", "int")
+    provider = USDT::Provider.create :ruby, :test
+    p = provider.probe("myfn", "probe1",
+      :string, :string, :integer)
 
     provider.enable
+
+    while true
+      p.enabled && p1.fire("omg", "probe!!", 12345)
+      sleep 0.5
+    end
+
+    # test probes with 
+    $ sudo dtrace -n 'ruby*:*:*:p2 {
+      trace(copyinstr(args[0]));
+      trace(copyinstr(args[1]));
+      trace(args[1); }'
 
 ### TODO (for first release)
 

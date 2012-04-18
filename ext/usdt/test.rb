@@ -1,28 +1,21 @@
 require File.expand_path(File.dirname(__FILE__), 'usdt')
-require 'pp'
 
 provider = USDT::Provider.create :ruby, :test
-pp provider.inspect
+p = provider.probe("myfn", "probe",
+                   :string, :string, :integer)
 
-p1 = provider.probe("testrb", "p1",
-                    :string, :string, :string,
-                    :integer, :integer, :integer)
+provider.enable
 
-p2 = provider.probe("testrb", "p2",
-                    :integer, :integer, :integer, :integer)
-
-r = provider.enable
-puts r.inspect
+puts "run:\nsudo dtrace -n 'ruby*:test:myfn:probe { printf('%s %s %d',
+  copyinstr(arg0),
+  copyinstr(arg1),
+  args[2])
+}'"
 
 while true
-  if p1.enabled?
-    puts "fire p1"
-    puts p1.fire("one", "two", "three", 1, 2, 3)
-  end
-
-  if p2.enabled?
-    puts "fire p2"
-    puts p2.fire( 1, 2, 3, 4)
+  if p.enabled? 
+    puts("Fired!")
   end
   sleep 0.5
 end
+
