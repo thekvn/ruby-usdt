@@ -53,11 +53,21 @@ static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
   const char *name = STR2CSTR(argv[1]);
   const char *types[6];
   size_t i, pargc = 0;
+  size_t t_int = rb_intern("integer");
+  size_t t_str = rb_intern("string");
 
   for (i = 0; i < 6; i++) {
-    if (i < argc-2 && TYPE(argv[i+2]) == T_STRING) {
-      types[i] = STR2CSTR(argv[i+2]);
-      pargc++;
+    if (i < argc-2) {
+      Check_Type(argv[i+2], T_SYMBOL);
+      if (t_int == rb_to_id(argv[i+2])) {
+        types[i] = "int";
+        pargc++;
+      } else if (t_str == rb_to_id(argv[i+2])) {
+        types[i] = "char *";
+        pargc++;
+      } else {
+        types[i] = NULL;
+      }
     } else {
       types[i] = NULL;
     }
