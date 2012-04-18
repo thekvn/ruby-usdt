@@ -2,8 +2,8 @@
 
 Ruby bindings for [libusdt](https://github.com/chrisa/libusdt).
 
-Applications, Libraries, and Frameworks can consume ruby-usdt to define DTrace 
-providers and probes at runtime for instrumentation and analysis by the DTrace
+Applications, Libraries, and Frameworks can consume ruby-usdt to define USDT  
+providers at runtime for instrumentation and analysis by the DTrace
 [DTrace](http://en.wikipedia.org/wiki/DTrace) framework.
 
 ### Install
@@ -44,6 +44,12 @@ providers and probes at runtime for instrumentation and analysis by the DTrace
       copyinstr(arg1),
       args[2])
     }'
+    
+## Additional Resources
+
+- [User-Level-Statically Defined Tracing](http://www.solarisinternals.com/wiki/index.php/DTrace_Topics_USDT#USDT)
+- [DTrace Book](http://www.dtracebook.com/index.php/Main_Page)
+- [Libusdt - Creating DTrace Providers at Runtime](http://chrisa.github.com/blog/2011/12/04/libusdt-runtime-dtrace-providers/)
 
 ## License
 
