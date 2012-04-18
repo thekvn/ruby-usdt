@@ -16,5 +16,5 @@ Gem::Specification.new do |s|
   s.summary     = "ruby bindings to libusdt"
   s.summary     = "ruby bindings to libusdt"
   s.files        = Dir.glob("{lib,ext}/**/*") + %w(README.md LICENSE.md)
-  s.require_path = 'lib'
+  s.require_paths = ['lib', 'ext']
 end
