@@ -1,2 +1,4 @@
+Makefile
 *.o
 *.bundle
+conftest.dSYM
