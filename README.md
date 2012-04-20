@@ -1,5 +1,7 @@
 # ruby-usdt
 
+Native DTrace probes for ruby apps
+
 Ruby bindings for [libusdt](https://github.com/chrisa/libusdt).
 
 Applications, Libraries, and Frameworks can consume ruby-usdt to define USDT  

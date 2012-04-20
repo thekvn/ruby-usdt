@@ -13,8 +13,7 @@ Gem::Specification.new do |s|
   s.email       = ["kevin@yinkei.com"]
   s.homepage    = "http://github.com/kevinykchan/ruby-usdt"
   s.extensions  = ['ext/usdt/extconf.rb']
-  s.summary     = "ruby bindings to libusdt"
-  s.summary     = "ruby bindings to libusdt"
+  s.summary     = "Native DTrace probes ruby apps"
   s.files        = Dir.glob("{lib,ext}/**/*") + %w(README.md LICENSE.md)
   s.require_paths = ['lib', 'ext']
 end
