@@ -31,10 +31,13 @@ void Init_usdt() {
  * USDT::Provider.create :name, :modname
  */
 static VALUE provider_create(VALUE self, VALUE name, VALUE mod) {
-  usdt_provider_t* p = usdt_create_provider(
-    STR2CSTR(name),
-    STR2CSTR(mod)
-  );
+  Check_Type(name, T_SYMBOL);
+  Check_Type(mod, T_SYMBOL);
+
+  char *namestr = rb_id2name(rb_to_id(name));
+  char *modstr = rb_id2name(rb_to_id(mod));
+
+  usdt_provider_t* p = usdt_create_provider(namestr, modstr);
 
   VALUE rbProvider = Data_Wrap_Struct(USDT_Provider, NULL, free, p);
 
