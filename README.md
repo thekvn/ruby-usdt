@@ -32,7 +32,7 @@ providers at runtime for instrumentation and analysis by the DTrace
 
     while true
       if p.enabled
-      	p.fire("omg", "probe!!", 12345)
+        p.fire("omg", "probe!!", 12345)
       end
       sleep 0.5
     end
