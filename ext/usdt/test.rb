@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__)) + '/usdt'
 
 provider = USDT::Provider.create :ruby, :test
 puts provider
-p = provider.probe("myfn", "probe",
+p = provider.probe(:myfn, :probe,
                    :string, :string, :integer)
 
 provider.enable

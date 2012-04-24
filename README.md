@@ -26,7 +26,7 @@ providers at runtime for instrumentation and analysis by the DTrace
     # args must be either :integer, or :string
     # max 6 args (dtrace provides this many), additional args will be ignored
     # returns USDT::Probe object
-    p = provider.probe("myfn", "probe", :string, :string, :integer)
+    p = provider.probe(:myfn, :probe, :string, :string, :integer)
 
     # Provider#enable
     # enables the probes defined with #probe

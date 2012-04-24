@@ -34,8 +34,8 @@ static VALUE provider_create(VALUE self, VALUE name, VALUE mod) {
   Check_Type(name, T_SYMBOL);
   Check_Type(mod, T_SYMBOL);
 
-  char *namestr = rb_id2name(rb_to_id(name));
-  char *modstr = rb_id2name(rb_to_id(mod));
+  const char *namestr = rb_id2name(rb_to_id(name));
+  const char *modstr = rb_id2name(rb_to_id(mod));
 
   usdt_provider_t* p = usdt_create_provider(namestr, modstr);
 
@@ -52,8 +52,8 @@ static VALUE provider_create(VALUE self, VALUE name, VALUE mod) {
  * USDT::Provider#probe(func, name, pargs*)
  */
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
-  const char *func = RSTRING_PTR(argv[0]);
-  const char *name = RSTRING_PTR(argv[1]);
+  const char *func = rb_id2name(rb_to_id(argv[0]));
+  const char *name = rb_id2name(rb_to_id(argv[1]));
   const char *types[6];
   size_t i, pargc = 0;
   size_t t_int = rb_intern("integer");
@@ -118,6 +118,10 @@ static VALUE probe_enabled(VALUE self) {
  * USDT::Probe#fire *args
  */
 static VALUE probe_fire(int argc, VALUE *argv, VALUE self) {
+  if (probe_enabled(self) == Qfalse) {
+    return Qfalse;
+  }
+
   usdt_probedef_t **p = DATA_PTR(self);
   usdt_probedef_t *probedef = *p;
 
