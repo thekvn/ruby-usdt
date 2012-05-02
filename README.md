@@ -5,7 +5,7 @@ Native DTrace probes for ruby apps
 Ruby bindings for [libusdt](https://github.com/chrisa/libusdt).
 
 Applications, Libraries, and Frameworks can consume ruby-usdt to define USDT  
-providers at runtime for instrumentation and analysis by the DTrace
+providers at runtime for instrumentation and analysis by the 
 [DTrace](http://en.wikipedia.org/wiki/DTrace) framework.
 
 ### Install
@@ -33,7 +33,7 @@ providers at runtime for instrumentation and analysis by the DTrace
     provider.enable
 
     while true
-      if p.enabled
+      if p.enabled?
         p.fire("omg", "probe!!", 12345)
       end
       sleep 0.5
@@ -46,7 +46,7 @@ providers at runtime for instrumentation and analysis by the DTrace
       copyinstr(arg1),
       args[2])
     }'
-    
+
 ## Additional Resources
 
 - [User-Level-Statically Defined Tracing](http://www.solarisinternals.com/wiki/index.php/DTrace_Topics_USDT#USDT)
