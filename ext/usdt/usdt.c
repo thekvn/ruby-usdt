@@ -54,12 +54,12 @@ static VALUE provider_create(VALUE self, VALUE name, VALUE mod) {
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
   const char *func = rb_id2name(rb_to_id(argv[0]));
   const char *name = rb_id2name(rb_to_id(argv[1]));
-  const char *types[6];
+  const char *types[USDT_ARG_MAX];
   size_t i, pargc = 0;
   size_t t_int = rb_intern("integer");
   size_t t_str = rb_intern("string");
 
-  for (i = 0; i < 6; i++) {
+  for (i = 0; i < USDT_ARG_MAX; i++) {
     if (i < argc - 2) {
       Check_Type(argv[i+2], T_SYMBOL);
       if (t_int == rb_to_id(argv[i+2])) {
@@ -125,8 +125,8 @@ static VALUE probe_fire(int argc, VALUE *argv, VALUE self) {
   usdt_probedef_t **p = DATA_PTR(self);
   usdt_probedef_t *probedef = *p;
 
-  void *pargs[6];
-  int i;
+  void *pargs[USDT_ARG_MAX];
+  size_t i;
 
   for (i = 0; i < probedef->argc; i++) {
     if (probedef->types[i] == USDT_ARGTYPE_STRING) {
