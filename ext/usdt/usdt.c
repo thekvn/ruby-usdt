@@ -9,6 +9,7 @@ VALUE USDT_Error;
 static VALUE provider_create(VALUE self, VALUE name, VALUE mod);
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self);
 static VALUE provider_enable(VALUE self);
+static VALUE provider_disable(VALUE self);
 static VALUE probe_enabled(VALUE self);
 static VALUE probe_fire(int argc, VALUE *argv, VALUE self);
 
@@ -21,6 +22,7 @@ void Init_usdt() {
   rb_define_singleton_method(USDT_Provider, "create", provider_create, 2);
   rb_define_method(USDT_Provider, "probe", provider_probe, -1);
   rb_define_method(USDT_Provider, "enable", provider_enable, 0);
+  rb_define_method(USDT_Provider, "disable", provider_disable, 0);
 
   USDT_Probe = rb_define_class_under(USDT, "Probe", rb_cObject);
   rb_define_method(USDT_Probe, "enabled?", probe_enabled, 0);
@@ -93,6 +95,19 @@ static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
 static VALUE provider_enable(VALUE self) {
   usdt_provider_t *provider = DATA_PTR(self);
   int status = usdt_provider_enable(provider);
+  if (status == 0) {
+    return Qtrue;
+  } else {
+    rb_raise(USDT_Error, "%s", usdt_errstr(provider));
+  }
+}
+
+/**
+ * USDT::Provider#disable
+ */
+static VALUE provider_disable(VALUE self) {
+  usdt_provider_t *provider = DATA_PTR(self);
+  int status = usdt_provider_disable(provider);
   if (status == 0) {
     return Qtrue;
   } else {
