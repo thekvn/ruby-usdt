@@ -12,6 +12,11 @@ providers at runtime for instrumentation and analysis by the
 
     gem install ruby-usdt
 
+When using Bundler to integrate ruby-usdt into a Ruby or Rails project,
+you will need to specify that there are git submodule dependencies:
+
+    gem "ruby-usdt", :submodules => true
+
 ### Usage
 
     # Provider.create <provider>, <module>
