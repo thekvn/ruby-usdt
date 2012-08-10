@@ -8,6 +8,7 @@ VALUE USDT_Error;
 
 static VALUE provider_create(VALUE self, VALUE name, VALUE mod);
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self);
+static VALUE provider_remove_probe(VALUE self, VALUE probe);
 static VALUE provider_enable(VALUE self);
 static VALUE provider_disable(VALUE self);
 static VALUE probe_enabled(VALUE self);
@@ -21,6 +22,7 @@ void Init_usdt() {
   USDT_Provider = rb_define_class_under(USDT, "Provider", rb_cObject);
   rb_define_singleton_method(USDT_Provider, "create", provider_create, 2);
   rb_define_method(USDT_Provider, "probe", provider_probe, -1);
+  rb_define_method(USDT_Provider, "remove_probe", provider_remove_probe, 1);
   rb_define_method(USDT_Provider, "enable", provider_enable, 0);
   rb_define_method(USDT_Provider, "disable", provider_disable, 0);
 
@@ -87,6 +89,19 @@ static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
   usdt_provider_add_probe(provider, *probe);
   VALUE rbProbe = Data_Wrap_Struct(USDT_Probe, NULL, free, probe);
   return rbProbe;
+}
+
+/**
+ * USDT::Provider#remove_probe(probe)
+ */
+static VALUE provider_remove_probe(VALUE self, VALUE probe) {
+  usdt_provider_t *provider = DATA_PTR(self);
+  usdt_probedef_t **p = DATA_PTR(probe);
+  usdt_probedef_t *probedef = *p;
+
+  usdt_provider_remove_probe(provider, probedef);
+
+  return Qtrue;
 }
 
 /**
