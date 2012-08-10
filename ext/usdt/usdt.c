@@ -86,9 +86,13 @@ static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
   probe = ALLOC(usdt_probedef_t *);
   *probe = usdt_create_probe(func, name, pargc, types);
 
-  usdt_provider_add_probe(provider, *probe);
-  VALUE rbProbe = Data_Wrap_Struct(USDT_Probe, NULL, free, probe);
-  return rbProbe;
+  if ((usdt_provider_add_probe(provider, *probe) == 0)) {
+    VALUE rbProbe = Data_Wrap_Struct(USDT_Probe, NULL, free, probe);
+    return rbProbe;
+  }
+  else {
+    rb_raise(USDT_Error, "%s", usdt_errstr(provider));
+  }
 }
 
 /**
