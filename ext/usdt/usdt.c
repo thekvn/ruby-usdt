@@ -8,7 +8,9 @@ VALUE USDT_Error;
 
 static VALUE provider_create(VALUE self, VALUE name, VALUE mod);
 static VALUE provider_probe(int argc, VALUE *argv, VALUE self);
+static VALUE provider_remove_probe(VALUE self, VALUE probe);
 static VALUE provider_enable(VALUE self);
+static VALUE provider_disable(VALUE self);
 static VALUE probe_enabled(VALUE self);
 static VALUE probe_fire(int argc, VALUE *argv, VALUE self);
 
@@ -20,7 +22,9 @@ void Init_usdt() {
   USDT_Provider = rb_define_class_under(USDT, "Provider", rb_cObject);
   rb_define_singleton_method(USDT_Provider, "create", provider_create, 2);
   rb_define_method(USDT_Provider, "probe", provider_probe, -1);
+  rb_define_method(USDT_Provider, "remove_probe", provider_remove_probe, 1);
   rb_define_method(USDT_Provider, "enable", provider_enable, 0);
+  rb_define_method(USDT_Provider, "disable", provider_disable, 0);
 
   USDT_Probe = rb_define_class_under(USDT, "Probe", rb_cObject);
   rb_define_method(USDT_Probe, "enabled?", probe_enabled, 0);
@@ -82,9 +86,26 @@ static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
   probe = ALLOC(usdt_probedef_t *);
   *probe = usdt_create_probe(func, name, pargc, types);
 
-  usdt_provider_add_probe(provider, *probe);
-  VALUE rbProbe = Data_Wrap_Struct(USDT_Probe, NULL, free, probe);
-  return rbProbe;
+  if ((usdt_provider_add_probe(provider, *probe) == 0)) {
+    VALUE rbProbe = Data_Wrap_Struct(USDT_Probe, NULL, free, probe);
+    return rbProbe;
+  }
+  else {
+    rb_raise(USDT_Error, "%s", usdt_errstr(provider));
+  }
+}
+
+/**
+ * USDT::Provider#remove_probe(probe)
+ */
+static VALUE provider_remove_probe(VALUE self, VALUE probe) {
+  usdt_provider_t *provider = DATA_PTR(self);
+  usdt_probedef_t **p = DATA_PTR(probe);
+  usdt_probedef_t *probedef = *p;
+
+  usdt_provider_remove_probe(provider, probedef);
+
+  return Qtrue;
 }
 
 /**
@@ -93,6 +114,19 @@ static VALUE provider_probe(int argc, VALUE *argv, VALUE self) {
 static VALUE provider_enable(VALUE self) {
   usdt_provider_t *provider = DATA_PTR(self);
   int status = usdt_provider_enable(provider);
+  if (status == 0) {
+    return Qtrue;
+  } else {
+    rb_raise(USDT_Error, "%s", usdt_errstr(provider));
+  }
+}
+
+/**
+ * USDT::Provider#disable
+ */
+static VALUE provider_disable(VALUE self) {
+  usdt_provider_t *provider = DATA_PTR(self);
+  int status = usdt_provider_disable(provider);
   if (status == 0) {
     return Qtrue;
   } else {
