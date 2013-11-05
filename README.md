@@ -10,47 +10,54 @@ providers at runtime for instrumentation and analysis by the
 
 ### Install
 
-    gem install ruby-usdt
+```ruby
+gem install ruby-usdt
+```
 
 When using Bundler to integrate ruby-usdt into a Ruby or Rails project,
 you will need to specify that there are git submodule dependencies:
 
-    gem "ruby-usdt", :submodules => true
+```ruby
+gem "ruby-usdt", :submodules => true
+```
 
 ### Usage
 
-    # Provider.create <provider>, <module>
-    #
-    # Creates a probe
-    #
-    # returns USDT::Provider object
-    provider = USDT::Provider.create :ruby, :mymod
+```ruby
+# Provider.create <provider>, <module>
+#
+# Creates a probe
+#
+# returns USDT::Provider object
+provider = USDT::Provider.create :ruby, :mymod
 
-    # Provider#probe *args
-    #
-    # args must be either :integer, or :string
-    # max 6 args (dtrace provides this many), additional args will be ignored
-    # returns USDT::Probe object
-    p = provider.probe(:myfn, :probe, :string, :string, :integer)
+# Provider#probe *args
+#
+# args must be either :integer, or :string
+# max 6 args (dtrace provides this many), additional args will be ignored
+# returns USDT::Probe object
+probe = provider.probe(:myfn, :probe, :string, :string, :integer)
 
-    # Provider#enable
-    # enables the probes defined with #probe
-    provider.enable
+# Provider#enable
+# enables the probes defined with #probe
+provider.enable
 
-    while true
-      if p.enabled?
-        p.fire("omg", "probe!!", 12345)
-      end
-      sleep 0.5
-    end
+while true
+  if probe.enabled?
+    probe.fire("omg", "probe!!", 12345)
+  end
+  sleep 0.5
+end
+```
 
-    # see the probes in action with:
-    # you should see continious output of the fire args above
-    sudo dtrace -n 'ruby*:mymod:myfn:probe { printf("%s %s %d",
-      copyinstr(arg0),
-      copyinstr(arg1),
-      args[2])
-    }'
+To see the above probe working, the following dtrace script can be used:
+```bash
+sudo dtrace -n 'ruby*:mymod:myfn:probe { printf("%s %s %d",
+  copyinstr(arg0),
+  copyinstr(arg1),
+  args[2])
+}'
+```
 
 ## Additional Resources
 
