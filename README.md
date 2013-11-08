@@ -59,6 +59,17 @@ sudo dtrace -n 'ruby*:mymod:myfn:probe { printf("%s %s %d",
 }'
 ```
 
+### Probes in Ruby
+
+Introspection can be done on a probe from within Ruby using the
+following commands:
+
+```ruby
+probe.function  => :myfn
+probe.name      => :probe
+probe.arguments => [:string, :string, :integer]
+```
+
 ## Additional Resources
 
 - [User-Level-Statically Defined Tracing](http://www.solarisinternals.com/wiki/index.php/DTrace_Topics_USDT#USDT)

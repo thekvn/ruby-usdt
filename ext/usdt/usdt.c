@@ -13,6 +13,9 @@ static VALUE provider_enable(VALUE self);
 static VALUE provider_disable(VALUE self);
 static VALUE probe_enabled(VALUE self);
 static VALUE probe_fire(int argc, VALUE *argv, VALUE self);
+static VALUE probe_function(VALUE self);
+static VALUE probe_name(VALUE self);
+static VALUE probe_args(VALUE self);
 
 void Init_usdt() {
   USDT = rb_define_module("USDT");
@@ -29,6 +32,9 @@ void Init_usdt() {
   USDT_Probe = rb_define_class_under(USDT, "Probe", rb_cObject);
   rb_define_method(USDT_Probe, "enabled?", probe_enabled, 0);
   rb_define_method(USDT_Probe, "fire", probe_fire, -1);
+  rb_define_method(USDT_Probe, "function", probe_function, 0);
+  rb_define_method(USDT_Probe, "name", probe_name, 0);
+  rb_define_method(USDT_Probe, "arguments", probe_args, 0);
 }
 
 /**
@@ -176,4 +182,44 @@ static VALUE probe_fire(int argc, VALUE *argv, VALUE self) {
 
   usdt_fire_probe(probedef->probe, probedef->argc, pargs);
   return Qtrue;
+}
+
+/**
+ * USDT::Probe#function
+ */
+static VALUE probe_function(VALUE self) {
+  usdt_probedef_t **p = DATA_PTR(self);
+  usdt_probedef_t *probedef = *p;
+  return ID2SYM(rb_intern(probedef->function));
+}
+
+/**
+ * USDT::Probe#name
+ */
+static VALUE probe_name(VALUE self) {
+  usdt_probedef_t **p = DATA_PTR(self);
+  usdt_probedef_t *probedef = *p;
+  return ID2SYM(rb_intern(probedef->name));
+}
+
+/**
+ * USDT::Probe#arguments
+ */
+static VALUE probe_args(VALUE self) {
+  usdt_probedef_t **p = DATA_PTR(self);
+  usdt_probedef_t *probedef = *p;
+
+  VALUE args = rb_ary_new();
+  size_t i;
+
+  for (i = 0; i < probedef->argc; i++) {
+    if (probedef->types[i] == USDT_ARGTYPE_STRING) {
+      rb_ary_push(args, ID2SYM(rb_intern("string")));
+    } else if (probedef->types[i] == USDT_ARGTYPE_INTEGER) {
+      rb_ary_push(args, ID2SYM(rb_intern("integer")));
+    } else {
+      rb_ary_push(args, Qnil);
+    }
+  }
+  return args;
 }
