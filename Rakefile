@@ -17,10 +17,8 @@ namespace :ext do
       sh('make clean')
     end
     Dir.chdir('ext/usdt') do
-      sh('make clean')
-      sh('rm Makefile')
-      sh('rm *.a')
-      sh('rm *.t sh')
+      sh('make clean || true')
+      sh('rm -f Makefile *.a *.h')
     end
   end
 end
