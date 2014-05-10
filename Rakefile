@@ -1,4 +1,9 @@
 require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
 
 namespace :ext do
   desc 'checkout git submodules'
@@ -8,8 +13,15 @@ namespace :ext do
 
   desc 'make clean in extensions'
   task :clean => :checkout do
-    sh('cd ext/libusdt && make clean')
-    sh('cd ext/usdt && make clean')
+    Dir.chdir('ext/libusdt') do
+      sh('make clean')
+    end
+    Dir.chdir('ext/usdt') do
+      sh('make clean')
+      sh('rm Makefile')
+      sh('rm *.a')
+      sh('rm *.t sh')
+    end
   end
 end
 

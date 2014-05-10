@@ -5,3 +5,4 @@ pkg
 *.o
 *.a
 *.log
+Gemfile.lock

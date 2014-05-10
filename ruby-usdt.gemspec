@@ -15,5 +15,9 @@ Gem::Specification.new do |s|
   s.extensions  = ['ext/usdt/extconf.rb']
   s.summary     = "Native DTrace probes for ruby."
   s.files        = Dir.glob("{lib,ext}/**/*") + %w(README.md LICENSE.md)
+  s.test_files  = Dir.glob('spec/**/*')
   s.require_paths = ['lib', 'ext']
+
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
 end
