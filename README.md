@@ -70,6 +70,13 @@ probe.name      => :probe
 probe.arguments => [:string, :string, :integer]
 ```
 
+## Interoperability
+
+On systems with DTrace, this gem will compile C extensions that hook into USDT.
+On systems without DTrace, the gem should install with a noop implementation,
+so that probes can be added to projects without losing the ability to deploy to
+non-dtraceable platforms.
+
 ## Additional Resources
 
 - [User-Level-Statically Defined Tracing](http://www.solarisinternals.com/wiki/index.php/DTrace_Topics_USDT#USDT)
